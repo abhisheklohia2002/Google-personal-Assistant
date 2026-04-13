@@ -9,7 +9,7 @@ const createCalenderEvents = tool(
     name: "calender-events",
     description: "Call to Create the calender events",
     schema: z.object({
-      //    query: z.string().describe("the query to use in calender events"),
+         query: z.string().describe("the query to use in calender events"),
     }),
   },
 );
@@ -29,7 +29,7 @@ export const getCalenderEvents = tool(
     name: "get-events",
     description: "Call to get the calender events",
     schema: z.object({
-      //    query: z.string().describe("the query to use in calender events"),
+         query: z.string().describe("the query to use in calender events"),
     }),
   },
 );
