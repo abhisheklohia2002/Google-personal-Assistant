@@ -4,7 +4,8 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/express": "^5.0.6"
   },
   "peerDependencies": {
     "typescript": "^5"
@@ -14,6 +15,8 @@
     "@langchain/langgraph": "^1.2.8",
     "@langchain/openai": "^1.4.4",
     "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "googleapis": "^171.4.0",
     "zod": "^4.3.6"
   }
 }

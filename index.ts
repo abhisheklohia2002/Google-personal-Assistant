@@ -8,6 +8,8 @@ import type { AIMessage } from "@langchain/core/messages";
 import dotenv from "dotenv";
 import { writeFileSync } from "fs";
 dotenv.config();
+
+
 let tools: any = [createCalenderEvents, getCalenderEvents];
 const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
