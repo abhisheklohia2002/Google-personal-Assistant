@@ -1,7 +1,7 @@
 # Project Plan
 
 [Done] Project Setup
-[] LLM Setup 
+[Done] LLM Setup 
 [] Setup the Tools - create event tool, get event tool
 [] Built the graph
 [] Implement the tools - Connect to google calender
