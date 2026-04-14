@@ -8,8 +8,9 @@ import { ToolNode } from "@langchain/langgraph/prebuilt";
 import type { AIMessage } from "@langchain/core/messages";
 import dotenv from "dotenv";
 import readline from "readline/promises";
+import { MemorySaver } from "@langchain/langgraph";
 dotenv.config();
-
+const checkpointer = new MemorySaver();
 let tools: any = [
   createCalenderEvents,
   getCalenderEvents,
@@ -46,7 +47,9 @@ graph
     tools: "tools",
   });
 
-const app = graph.compile();
+const app = graph.compile({
+  checkpointer,
+});
 
 async function main() {
   const rl = readline.createInterface({
@@ -80,13 +83,18 @@ async function main() {
         content: userInput,
       },
     ];
-    const result = await app.invoke({
-      messages,
-    });
+    const result = await app.invoke(
+      {
+        messages,
+      },
+      {
+        configurable: { thread_id: "1" },
+      },
+    );
     const message = result.messages;
-    console.log("AI", message[message.length - 1]?.content);
+    console.log("AI: ", message[message.length - 1]?.content);
   }
-  rl.close()
+  rl.close();
 }
 
 main();
