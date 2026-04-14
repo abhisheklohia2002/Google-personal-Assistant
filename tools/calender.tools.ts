@@ -37,7 +37,6 @@ const createCalenderEvents = tool(
     try {
       const response = await calender.events.insert({
         calendarId: "primary",
-        sendUpdates: "all",
         conferenceDataVersion: 1,
         requestBody: {
           summary,
@@ -86,7 +85,6 @@ const createCalenderEvents = tool(
 export const getCalenderEvents = tool(
   async (params) => {
     const { q, timeMin, timeMax } = params;
-    console.log(q, timeMin, timeMax, "timeMin,timeMax");
     try {
       const response = await calender.events.list({
         calendarId: "primary",
@@ -132,5 +130,30 @@ export const getCalenderEvents = tool(
     }),
   },
 );
+
+export const deleteCalenderEvents = tool(
+  async({eventId})=>{
+    const response  = await calender.events.delete(
+      {
+           calendarId: "primary",
+           eventId
+      }  
+    )
+    if(!response){
+      return  "Something Went Wrong .event not deleted";
+    }
+      return  "Event deleted successfully";
+
+  },
+   {
+    name: "delete-calender-events",
+    description: "Call to delete the calender events",
+    schema: z.object({
+     eventId: z.string().describe("The id of the calendar event to delete"),
+    }),
+  }
+)
+
+
 
 export default createCalenderEvents;
