@@ -54,7 +54,7 @@ async function main() {
     messages: [
       {
         role: "user",
-        content: "Hii, have any  meeting with abhishek",
+        content: "Hii, can U create the Meeting with abhishek.lohia@tripxl.com",
       },
     ],
   });

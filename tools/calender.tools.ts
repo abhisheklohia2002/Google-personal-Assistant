@@ -4,6 +4,7 @@ import z from "zod";
 import dotenv from "dotenv";
 import tokens from "../token.json";
 dotenv.config();
+
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_Id,
   process.env.GOOGLE_CLIENT_SECRET,
@@ -12,15 +13,58 @@ const oauth2Client = new google.auth.OAuth2(
 oauth2Client.setCredentials(tokens);
 const calender = google.calendar({ version: "v3", auth: oauth2Client });
 
+type attendee = {
+  email: string;
+  displayName: string;
+};
+type EventData = {
+  summary: string;
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+  attendees: attendee[];
+};
 const createCalenderEvents = tool(
-  async () => {
-    return "hello ";
+  async (eventData: EventData) => {
+    const { start, summary, end, attendees } = eventData as EventData;
+    try {
+      const response = await calender.events.insert({
+        calendarId: "primary",
+        sendUpdates: "all",
+        requestBody: {
+          summary,
+          start,
+          end,
+          attendees,
+        },
+      });
+      console.log("response :", response);
+    } catch (error) {
+      console.log("error",error);
+    }
   },
   {
     name: "calender-events",
     description: "Call to Create the calender events",
     schema: z.object({
-      query: z.string().describe("the query to use in calender events"),
+      summart: z.string().describe("The Title of the Events"),
+      start: z.object({
+        dateTime: z.string().describe("The Start Date time of the event in UTC"),
+        timeZone:z.string().describe("The Start Time Zone of the event Time in UTC"),
+      }),
+      end: z.object({
+        dateTime: z.string().describe("The end Date time of the event in UTC"),
+        timeZone:z.string().describe("The end Time Zone of the event Time in UTC"),
+      }),
+      attendees:z.array(z.object({
+        email:z.string().describe("The Email of the attendee"),
+        displayName:z.string().describe("The display of the Name")
+      }))
     }),
   },
 );
