@@ -9,12 +9,17 @@ import type { AIMessage } from "@langchain/core/messages";
 import dotenv from "dotenv";
 import readline from "readline/promises";
 import { MemorySaver } from "@langchain/langgraph";
+import { createUser, getUser } from "./tools/user.tools";
+import db from "./db/Connection";
 dotenv.config();
 const checkpointer = new MemorySaver();
+db()
 let tools: any = [
   createCalenderEvents,
   getCalenderEvents,
   deleteCalenderEvents,
+  getUser,
+  createUser
 ];
 const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,

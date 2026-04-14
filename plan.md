@@ -13,5 +13,5 @@
 [Done] improve the system prompt
 [Done] Update/patch calender event
 [Done] Cancel the event
-[] Add new Tool - Content tool get the Contact / email 
+[Done] Add new Tool - Content tool get the Contact / email 
 [] Add Web search tool
