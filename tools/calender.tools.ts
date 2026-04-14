@@ -29,44 +29,58 @@ type EventData = {
   };
   attendees: attendee[];
 };
+
+
 const createCalenderEvents = tool(
   async (eventData: EventData) => {
-    const { start, summary, end, attendees } = eventData as EventData;
+    const { start, summary, end, attendees } = eventData;
     try {
       const response = await calender.events.insert({
         calendarId: "primary",
         sendUpdates: "all",
+        conferenceDataVersion: 1,
         requestBody: {
           summary,
           start,
           end,
           attendees,
+          conferenceData: {
+            createRequest: {
+              requestId: `meet-${Date.now()}`,
+              conferenceSolutionKey: {
+                type: "hangoutsMeet",
+              },
+            },
+          },
         },
       });
-      console.log("response :", response);
-    } catch (error) {
-      console.log("error",error);
+      return response.data;
+    } catch (error: any) {
+      console.log("error:", error.response?.data || error.message || error);
+      throw error;
     }
   },
   {
     name: "calender-events",
     description: "Call to Create the calender events",
     schema: z.object({
-      summart: z.string().describe("The Title of the Events"),
+      summary: z.string().describe("The Title of the Events"),
       start: z.object({
         dateTime: z.string().describe("The Start Date time of the event in UTC"),
-        timeZone:z.string().describe("The Start Time Zone of the event Time in UTC"),
+        timeZone: z.string().describe("The Start Time Zone of the event"),
       }),
       end: z.object({
-        dateTime: z.string().describe("The end Date time of the event in UTC"),
-        timeZone:z.string().describe("The end Time Zone of the event Time in UTC"),
+        dateTime: z.string().describe("The End Date time of the event in UTC"),
+        timeZone: z.string().describe("The End Time Zone of the event"),
       }),
-      attendees:z.array(z.object({
-        email:z.string().describe("The Email of the attendee"),
-        displayName:z.string().describe("The display of the Name")
-      }))
+      attendees: z.array(
+        z.object({
+          email: z.string().describe("The Email of the attendee"),
+          displayName: z.string().describe("The display name"),
+        })
+      ),
     }),
-  },
+  }
 );
 
 export const getCalenderEvents = tool(

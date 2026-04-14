@@ -9,7 +9,6 @@ import dotenv from "dotenv";
 import { writeFileSync } from "fs";
 dotenv.config();
 
-
 let tools: any = [createCalenderEvents, getCalenderEvents];
 const model = new ChatOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -50,13 +49,31 @@ async function main() {
   // const graphStateArrayBuffer = await graphStateImage.arrayBuffer();
   // const filePath = "./calenderGraph.png";
   // writeFileSync(filePath, new Uint8Array(graphStateArrayBuffer));
+  const messages = [
+    {
+      role: "system",
+      content: `
+You are a meeting assistant.
+Today's date is 2026-04-14.
+User timezone is Asia/Kolkata.
+
+When the user says:
+- today => use 2026-04-14
+- tomorrow => use 2026-04-15
+
+Always convert relative dates into exact dateTime values.
+Always use Asia/Kolkata unless the user says another timezone.
+For meetings, generate start and end time in proper ISO format.
+`,
+    },
+    {
+      role: "user",
+      content:
+        "Hii, Today can U create the Meeting with abhishek.lohia@tripxl.com around 11:45 am",
+    },
+  ];
   const result = await app.invoke({
-    messages: [
-      {
-        role: "user",
-        content: "Hii, can U create the Meeting with abhishek.lohia@tripxl.com",
-      },
-    ],
+    messages,
   });
   const message = result.messages;
   console.log("AI", message[message.length - 1]?.content);
