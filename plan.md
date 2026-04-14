@@ -8,3 +8,4 @@
 [Done] Test the agents
 [Done] Terminal UI
 [Done] Add the Memory
+[] Fix TimeZone

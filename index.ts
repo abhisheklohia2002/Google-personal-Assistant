@@ -56,6 +56,14 @@ async function main() {
     input: process.stdin,
     output: process.stdout,
   });
+
+  const indiaTimeZone = "Asia/Kolkata";
+
+  const formatted = new Intl.DateTimeFormat("en-IN", {
+    timeZone: indiaTimeZone,
+    dateStyle: "full",
+    timeStyle: "long",
+  }).format(new Date());
   while (true) {
     const userInput = await rl.question("You: ");
     if (userInput === "/bye") {
@@ -66,16 +74,8 @@ async function main() {
         role: "system",
         content: `
   You are a meeting assistant.
-  Today's date is 2026-04-14.
-  User timezone is Asia/Kolkata.
-  
-  When the user says:
-  - today => use 2026-04-14
-  - tomorrow => use 2026-04-15
-  
-  Always convert relative dates into exact dateTime values.
-  Always use Asia/Kolkata unless the user says another timezone.
-  For meetings, generate start and end time in proper ISO format.
+  Today's date is ${new Date().toLocaleDateString("sv-SE").replace(" ", "T")}.
+  User timezone is ${formatted})}.
   `,
       },
       {
