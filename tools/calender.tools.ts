@@ -2,7 +2,6 @@ import { tool } from "@langchain/core/tools";
 import { google } from "googleapis";
 import z from "zod";
 import dotenv from "dotenv";
-import tokens from "../token.json";
 dotenv.config();
 
 const oauth2Client = new google.auth.OAuth2(
@@ -10,7 +9,13 @@ const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_SECRET,
   process.env.GOOGLE_REDIRECT_URL,
 );
-oauth2Client.setCredentials(tokens);
+oauth2Client.setCredentials({
+  access_token: process.env.ACCESS_TOKEN,
+  refresh_token: process.env.REFRESH_TOKEN,
+  expiry_date: Number(process.env.EXPIRY_DATE),
+  scope: process.env.SCOPE,
+  token_type:process.env.TOKEN_TYPE
+});
 const calender = google.calendar({ version: "v3", auth: oauth2Client });
 
 type attendee = {
@@ -29,7 +34,6 @@ type EventData = {
   };
   attendees: attendee[];
 };
-
 
 const createCalenderEvents = tool(
   async (eventData: EventData) => {
@@ -76,10 +80,10 @@ const createCalenderEvents = tool(
         z.object({
           email: z.string().describe("The Email of the attendee"),
           displayName: z.string().describe("The display name"),
-        })
+        }),
       ),
     }),
-  }
+  },
 );
 
 export const getCalenderEvents = tool(
@@ -121,60 +125,50 @@ export const getCalenderEvents = tool(
         .describe(
           "The query to be used to get events from google calendar. It can be one of these values: sunmary, description, location, attendees display name, attendees email, organiser's name, organiser's emall",
         ),
-      timeMin: z
-        .string()
-        .describe("The from DateTime to get events"),
-      timeMax: z
-        .string()
-        .describe("The to datetime to get events"),
+      timeMin: z.string().describe("The from DateTime to get events"),
+      timeMax: z.string().describe("The to datetime to get events"),
     }),
   },
 );
 
 export const deleteCalenderEvents = tool(
-  async({eventId})=>{
-    const response  = await calender.events.delete(
-      {
-           calendarId: "primary",
-           eventId
-      }  
-    )
-    if(!response){
-      return  "Something Went Wrong .event not deleted";
+  async ({ eventId }) => {
+    const response = await calender.events.delete({
+      calendarId: "primary",
+      eventId,
+    });
+    if (!response) {
+      return "Something Went Wrong .event not deleted";
     }
-      return  "Event deleted successfully";
-
+    return "Event deleted successfully";
   },
-   {
+  {
     name: "delete-calender-events",
     description: "Call to delete the calender events",
     schema: z.object({
-     eventId: z.string().describe("The id of the calendar event to delete"),
+      eventId: z.string().describe("The id of the calendar event to delete"),
     }),
-  }
-)
+  },
+);
 
 export const updateCalenderEvents = tool(
-  async({eventId})=>{
-    const response  = await calender.events.update(
-      {
-           calendarId: "primary",
-           eventId
-      }  
-    )
-    if(!response){
-      return  "Something Went Wrong .event was not update";
+  async ({ eventId }) => {
+    const response = await calender.events.update({
+      calendarId: "primary",
+      eventId,
+    });
+    if (!response) {
+      return "Something Went Wrong .event was not update";
     }
-      return  "Event updated successfully";
-
+    return "Event updated successfully";
   },
-   {
+  {
     name: "update-calender-events",
     description: "Call to update the calender events",
     schema: z.object({
-     eventId: z.string().describe("The id of the calendar event to update"),
+      eventId: z.string().describe("The id of the calendar event to update"),
     }),
-  }
-)
+  },
+);
 
 export default createCalenderEvents;
