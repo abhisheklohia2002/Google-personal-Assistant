@@ -9,3 +9,9 @@
 [Done] Terminal UI
 [Done] Add the Memory
 [Done] Fix TimeZone
+
+[Done] improve the system prompt
+[Done] Update/patch calender event
+[Done] Cancel the event
+[] Add new Tool - Content tool get the Contact / email 
+[] Add Web search tool
