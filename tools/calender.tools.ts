@@ -154,6 +154,27 @@ export const deleteCalenderEvents = tool(
   }
 )
 
+export const updateCalenderEvents = tool(
+  async({eventId})=>{
+    const response  = await calender.events.update(
+      {
+           calendarId: "primary",
+           eventId
+      }  
+    )
+    if(!response){
+      return  "Something Went Wrong .event was not update";
+    }
+      return  "Event updated successfully";
 
+  },
+   {
+    name: "update-calender-events",
+    description: "Call to update the calender events",
+    schema: z.object({
+     eventId: z.string().describe("The id of the calendar event to update"),
+    }),
+  }
+)
 
 export default createCalenderEvents;
